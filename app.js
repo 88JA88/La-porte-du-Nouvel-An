@@ -1,0 +1,38 @@
+const DEFAULT_SILLY = [
+  "Le canard qui faisait du ski nautique", "Un concours de chaussettes dépareillées", "La fois où le grille-pain a demandé un autographe", "Une sieste héroïque dans un bac à glaçons", "Notre rendez-vous secret avec trois pingouins", "Le jour où la plante verte a gagné au karaoké", "Le mystère du croissant disparu", "Un marathon en pantoufles", "La recette de soupe au chocolat", "Le pigeon qui connaissait nos prénoms", "L'invasion des confettis dans le salon", "Le cours de salsa avec une lampe torche"
+];
+const BLANK = () => ({ id: crypto.randomUUID(), label: "Nouvelle animation", firstName: "", question: "", correctAnswer: "Notre aventure inoubliable !", sillyAnswers: [...DEFAULT_SILLY] });
+let animations = load();
+let selectedId = animations[0]?.id;
+let currentRound = [];
+let signIndex = 0;
+let timer;
+const $ = id => document.getElementById(id);
+const fields = { label: $("label"), firstName: $("first-name"), question: $("question"), correctAnswer: $("correct-answer"), sillyAnswers: $("silly-answers") };
+function load(){ try { const saved = JSON.parse(localStorage.getItem("nouvel-an-animations")); return Array.isArray(saved) && saved.length ? saved : [BLANK()]; } catch { return [BLANK()]; } }
+function current(){ return animations.find(item => item.id === selectedId); }
+function save(){ localStorage.setItem("nouvel-an-animations", JSON.stringify(animations)); $("save-state").textContent = "Enregistré localement"; renderList(); }
+function displayName(item){ return item.label?.trim() || (item.firstName?.trim() ? `Vœux pour ${item.firstName.trim()}` : "Animation sans prénom"); }
+function renderList(){ const list = $("animation-list"); list.innerHTML = ""; const template = $("list-item-template"); animations.forEach(item => { const node = template.content.firstElementChild.cloneNode(true); node.classList.toggle("active", item.id === selectedId); node.querySelector(".item-name").textContent = displayName(item); node.querySelector(".item-detail").textContent = item.firstName?.trim() ? `Pour ${item.firstName.trim()}` : "Sans prénom"; node.onclick = () => { selectedId = item.id; renderEditor(); resetPreview(); }; list.append(node); }); }
+function renderEditor(){ const item = current(); if (!item) return; $("editor-title").textContent = displayName(item); fields.label.value = item.label || ""; fields.firstName.value = item.firstName || ""; fields.question.value = item.question || ""; fields.correctAnswer.value = item.correctAnswer || ""; fields.sillyAnswers.value = (item.sillyAnswers || []).join("\n"); updateCall(); renderList(); }
+function updateCall() {}
+function updateModel(){ const item = current(); if (!item) return; item.label = fields.label.value; item.firstName = fields.firstName.value; item.question = fields.question.value; item.correctAnswer = fields.correctAnswer.value; item.sillyAnswers = fields.sillyAnswers.value.split("\n").map(x => x.trim()).filter(Boolean); save(); updateCall(); }
+function shuffle(items){ return [...items].sort(() => Math.random() - .5); }
+function makeRound(){ const item = current(); const nonsense = item.sillyAnswers.length >= 3 ? shuffle(item.sillyAnswers).slice(0,3) : shuffle([...item.sillyAnswers, ...DEFAULT_SILLY]).slice(0,3); return [...nonsense, item.correctAnswer || "La bonne réponse !"]; }
+function resetPreview(){ clearTimeout(timer); signIndex = 0; currentRound = makeRound(); const stage = $("stage"); stage.className = "stage scene-intro"; const sign = $("sign"); sign.textContent = "?"; sign.onclick = null; $("answer-button").hidden = true; $("success").hidden = true; $("scene-caption").textContent = ""; timer = setTimeout(showKnock, 2300); }
+function showKnock(){ $("stage").className = "stage scene-knock"; timer = setTimeout(showIntroSign, 1900); }
+function showIntroSign(){ const sign = $("sign"); $("stage").className = "stage scene-question"; sign.textContent = "Il nous faut le sésame !"; sign.onclick = null; $("scene-caption").textContent = ""; timer = setTimeout(showQuestion, 1800); }
+function showQuestion(){ clearTimeout(timer); const question = current().question.trim(); const sign = $("sign"); $("stage").className = "stage scene-question"; sign.textContent = question || "Un souvenir commun…"; sign.onclick = null; $("scene-caption").textContent = ""; timer = setTimeout(showPromptSign, 3000); }
+function showPromptSign(){ clearTimeout(timer); const sign = $("sign"); $("stage").className = "stage scene-question"; sign.textContent = "Clique si tu t’en souviens"; sign.onclick = showNextSign; $("scene-caption").textContent = ""; timer = setTimeout(showNextSign, 3000); }
+function wrongAnswer(){ clearTimeout(timer); $("stage").className = "stage scene-wrong"; $("scene-caption").textContent = "Oh non…"; timer = setTimeout(resetPreview, 4000); }
+function restartSequence(){ clearTimeout(timer); $("stage").className = "stage scene-restart"; $("scene-caption").textContent = ""; timer = setTimeout(resetPreview, 1100); }
+function showNextSign(){ clearTimeout(timer); $("stage").className = "stage scene-answers"; const sign = $("sign"); $("answer-button").hidden = true; sign.textContent = currentRound[signIndex]; sign.onclick = () => { clearTimeout(timer); if (signIndex === 3) success(); else wrongAnswer(); }; $("scene-caption").textContent = ""; timer = setTimeout(() => { signIndex = (signIndex + 1) % 4; if (signIndex === 0) currentRound = makeRound(); showNextSign(); }, 3000); }
+function success(){ clearTimeout(timer); $("stage").className = "stage scene-success scene-walking"; $("answer-button").hidden = true; $("success").hidden = false; $("scene-caption").textContent = ""; timer = setTimeout(() => { $("stage").className = "stage scene-success scene-sunrise"; }, 2600); }
+Object.values(fields).forEach(field => field.addEventListener("input", () => { updateModel(); resetPreview(); }));
+$("new-animation").onclick = () => { const item = BLANK(); animations.unshift(item); selectedId = item.id; save(); renderEditor(); resetPreview(); };
+$("duplicate").onclick = () => { const clone = structuredClone(current()); clone.id = crypto.randomUUID(); clone.label = `${displayName(current())} — copie`; animations.unshift(clone); selectedId = clone.id; save(); renderEditor(); resetPreview(); };
+$("delete-animation").onclick = () => { if (animations.length === 1) { alert("Conservez au moins une animation."); return; } if (confirm(`Supprimer « ${displayName(current())} » ?`)) { animations = animations.filter(x => x.id !== selectedId); selectedId = animations[0].id; save(); renderEditor(); resetPreview(); } };
+$("reset-preview").onclick = resetPreview;
+$("export-json").onclick = () => { const blob = new Blob([JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), animations }, null, 2)], { type: "application/json" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "voeux-nouvel-an.json"; link.click(); URL.revokeObjectURL(link.href); };
+$("import-json").onchange = event => { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const data = JSON.parse(reader.result); const incoming = Array.isArray(data) ? data : data.animations; if (!Array.isArray(incoming)) throw new Error(); animations = incoming.map(x => ({ ...BLANK(), ...x, id: x.id || crypto.randomUUID(), sillyAnswers: Array.isArray(x.sillyAnswers) ? x.sillyAnswers : DEFAULT_SILLY })); selectedId = animations[0]?.id; save(); renderEditor(); resetPreview(); } catch { alert("Ce fichier JSON n’est pas reconnu."); } }; reader.readAsText(file); event.target.value = ""; };
+renderEditor(); resetPreview();
