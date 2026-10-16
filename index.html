@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Créateur local d'animations de vœux du Nouvel An." />
+    <title>La porte du Nouvel An</title>
+    <link rel="stylesheet" href="style.css?v=20261016-2" />
+    <style>
+      .scene-toss .wire-person { left:33%; animation: pick-up .56s ease-in-out forwards; }
+      .scene-toss .sign { top:-50px; left:17px; width:205px; min-height:91px; height:auto; padding:10px 12px; opacity:1; animation: toss-sign .56s ease-in forwards; font:700 16px/1.08 Georgia,serif; }
+      @keyframes toss-sign { to { transform:translate(310px,-125px) rotate(36deg); opacity:0; } }
+      @keyframes pick-up { 50% { transform:translateY(18px) rotate(13deg); } 100% { transform:translateY(0); } }
+    </style>
+    <style>
+      .scene-wrong .wire-person { left:33%; animation: sit-and-cry .45s ease-out forwards; }
+      .scene-wrong .wire-person::after { content:"💧"; position:absolute; top:58px; left:82px; font-size:20px; animation: tears .8s ease-in-out infinite; }
+      .scene-wrong .answer-button { animation: toss-answer .55s ease-in forwards; pointer-events:none; }
+      .scene-wrong .sign { display:none; }
+      @keyframes toss-answer { to { transform:translate(340px,-155px) rotate(40deg); opacity:0; } }
+      @keyframes sit-and-cry { to { transform:translate(-18px,48px) rotate(72deg); } }
+      @keyframes tears { 50% { transform:translateY(12px); opacity:.35; } }
+    </style>
+    <style>
+      .scene-answers .sign { display:block; top:-50px; left:17px; width:205px; min-height:91px; height:auto; padding:10px 12px; opacity:1; transform:rotate(-2deg); font:700 16px/1.08 Georgia,serif; animation:sign-up .35s ease-out forwards; }
+      .scene-wrong .sign { display:block; top:-50px; left:17px; width:205px; min-height:91px; height:auto; padding:10px 12px; opacity:1; animation:toss-sign .56s ease-in forwards; font:700 16px/1.08 Georgia,serif; }
+    </style>
+    <style>
+      .scene-restart .wire-person { left:33%; animation:run-away 1.1s ease-in forwards; }
+      .scene-restart .sign { opacity:0; }
+      @keyframes run-away { to { transform:translateX(-430px) rotate(-8deg); } }
+    </style>
+    <style>
+      .scene-intro .arm-left { animation: swing-arm-left .28s ease-in-out infinite alternate; }
+      .scene-intro .arm-right { animation: swing-arm-right .28s ease-in-out infinite alternate; }
+      .scene-intro .leg-left { animation: swing-leg-left .28s ease-in-out infinite alternate; }
+      .scene-intro .leg-right { animation: swing-leg-right .28s ease-in-out infinite alternate; }
+      @keyframes swing-arm-left { from { transform:rotate(58deg); } to { transform:rotate(-42deg); } }
+      @keyframes swing-arm-right { from { transform:rotate(-60deg); } to { transform:rotate(40deg); } }
+      @keyframes swing-leg-left { from { transform:rotate(30deg); } to { transform:rotate(-34deg); } }
+      @keyframes swing-leg-right { from { transform:rotate(-30deg); } to { transform:rotate(34deg); } }
+    </style>
+    <style>
+      .scene-knock .wire-person { left:42%; animation: stand-at-door .18s ease-out forwards; }
+      .scene-knock .arm-right { height:60px; animation: knock-against-door .18s ease-in-out 9 alternate; }
+      .scene-knock .arm-left { transform:rotate(55deg); }
+      .scene-knock .leg-left { transform:rotate(40deg); }
+      .scene-knock .leg-right { transform:rotate(-15deg); }
+      @keyframes stand-at-door { to { transform:translateX(0); } }
+      @keyframes knock-against-door { from { transform:rotate(-65deg) translate(0,0); } to { transform:rotate(-72deg) translate(7px,-3px); } }
+    </style>
+    <style>
+      .door-reveal { display:none; }
+      .scene-success { background:linear-gradient(#172b4b 0%,#203a64 62%,#1d3048 62%); }
+      .scene-success::after { display:none; }
+      .scene-success .door-knob { display:none; }
+      .scene-success.scene-sunrise .stars,.scene-success.scene-sunrise .moon { display:none; }
+      .scene-success .door { overflow:visible; background:transparent; box-shadow:none; }
+      .scene-success .door-reveal { display:block; position:absolute; z-index:1; inset:0; overflow:hidden; background:linear-gradient(#76bfe4 0%,#f9d495 51%,#378fba 52%,#1e6f9b 75%,#e3bd72 76%); opacity:0; }
+      .scene-success .door-reveal::before { content:""; position:absolute; z-index:1; right:-12%; bottom:-8%; width:125%; height:30%; background:radial-gradient(ellipse at 48% 5%,#f6dfa0 0 8%,transparent 9%),linear-gradient(172deg,transparent 0 36%,#ebcd83 37% 100%); }
+      .scene-success .sun { position:absolute; z-index:1; left:58%; bottom:48%; width:45px; height:45px; border-radius:50%; background:#fff1a6; box-shadow:0 0 23px #fff1a6; transform:translate(-50%,48px); }
+      .scene-success.scene-sunrise .sun { animation:sunrise 20.7s ease-out forwards; }
+      .scene-success.scene-sunrise .door-reveal { animation:landscape-appears 20.7s ease-out forwards; }
+      .scene-success .sea { position:absolute; z-index:2; bottom:24%; width:100%; height:24%; background:linear-gradient(#e7f6eb 0 2px,#378fba 3px,#1e6f9b 100%); opacity:.82; }
+      .trash-bag { display:none; }
+      .scene-success.scene-sunrise .trash-bag { display:flex; position:absolute; z-index:1; left:-170px; bottom:25%; width:145px; height:98px; align-items:center; justify-content:center; padding:15px 12px 10px; border-radius:48% 46% 42% 44%; background:linear-gradient(135deg,#24272b,#020303 68%); box-shadow:inset 14px 8px 18px #555a60,4px 7px 8px #143e59aa; color:#fff; font:700 15px/1.05 Georgia,serif; text-align:center; transform:rotate(-8deg); animation:trash-crosses-sea 20.7s linear forwards; }
+      .scene-success.scene-sunrise .trash-bag::before { content:""; position:absolute; top:-16px; left:53px; width:35px; height:23px; border-radius:50% 50% 20% 20%; background:#111315; transform:rotate(8deg); }
+      .caravel { display:none; }
+      .scene-success.scene-sunrise .caravel { display:block; position:absolute; z-index:1; left:calc(100% + 25px); bottom:31%; width:180px; height:125px; animation:caravel-arrives 17.625s ease-out forwards; }
+      .caravel::before { content:""; position:absolute; bottom:0; left:10px; width:160px; height:38px; border-radius:0 0 50% 50%; background:linear-gradient(#8b4e2c,#492719); box-shadow:inset 0 -10px #2d1711,0 7px 7px #143e5988; }
+      .caravel::after { content:"2027"; position:absolute; z-index:3; bottom:8px; left:55px; color:#f7e6b9; font:700 21px/1 Georgia,serif; letter-spacing:1px; text-shadow:1px 1px #2d1711; }
+      .caravel-mast { position:absolute; z-index:2; bottom:30px; left:87px; width:6px; height:102px; background:#57321e; }
+      .caravel-sail { position:absolute; z-index:1; bottom:49px; width:70px; height:78px; background:#f5e6bd; box-shadow:inset -8px 0 #d3b77f; }
+      .caravel-sail.left { left:18px; clip-path:polygon(100% 0,100% 100%,0 100%); }
+      .caravel-sail.right { left:93px; clip-path:polygon(0 0,100% 100%,0 100%); }
+      .caravel-flag { position:absolute; z-index:3; bottom:125px; left:90px; width:34px; height:20px; background:#ba463b; clip-path:polygon(0 0,100% 25%,0 100%); }
+      .new-year-message { display:none; }
+      .scene-success.scene-sunrise .new-year-message { display:block; position:absolute; z-index:7; top:calc(77% - 285px); left:58%; width:270px; max-height:0; overflow:hidden; padding:0 18px; transform:translate(-50%,-45px); border-radius:2px; background:#fff7df; box-shadow:0 5px 12px #17233a88; color:#4c3126; font:700 19px/1.22 Georgia,serif; text-align:center; animation:unroll-new-year-message 2.4s ease-out 6s forwards; }
+      .scene-success.scene-sunrise .new-year-message::before { content:""; display:block; height:9px; margin:0 -18px 10px; background:#d6a653; }
+      .scene-success .door::before,.scene-success .door::after { content:""; position:absolute; z-index:4; top:0; bottom:0; width:50%; background:#f1b656; box-shadow:inset 12px 0 #dd9244,inset -7px 0 #f9d37a; }
+      .scene-success .door::before { left:0; transform-origin:left center; animation:open-left 4.8s ease-in-out forwards; }
+      .scene-success .door::after { right:0; transform-origin:right center; animation:open-right 4.8s ease-in-out forwards; }
+      .scene-success .door-year { z-index:5; display:flex; justify-content:center; }
+      .scene-success .door-year span { display:inline-block; }
+      .scene-success .year-right { font-size:0; }
+      .scene-success .year-right::after { content:"26"; font-size:54px; }
+      .scene-success .year-left { animation:year-to-left 1.6s ease-in forwards; }
+      .scene-success .year-right { animation:year-to-right 1.6s ease-in forwards; }
+      .scene-success .wire-person { z-index:6; bottom:17%; }
+      .scene-success.scene-walking .wire-person { left:33%; animation:walk-to-door 2.6s linear forwards; }
+      .scene-success.scene-walking .leg-left { animation:walk-leg-left .29s linear 9 alternate; }
+      .scene-success.scene-walking .leg-right { animation:walk-leg-right .29s linear 9 alternate; }
+      .scene-success.scene-walking .arm-left { animation:walk-arm-left .29s linear 9 alternate; }
+      .scene-success.scene-walking .arm-right { animation:walk-arm-right .29s linear 9 alternate; }
+      .scene-success.scene-sunrise .wire-person { left:58%; transform:translateX(-50%); animation:move-aside-for-caravel 4s ease-out forwards; }
+      .scene-success .sign { display:none; }
+      .scene-success .success { top:7%; animation:fade-in 1.2s ease-out forwards; }
+      @keyframes open-left { to { transform:perspective(500px) rotateY(-108deg); } }
+      @keyframes open-right { to { transform:perspective(500px) rotateY(108deg); } }
+      @keyframes year-to-left { to { opacity:0; transform:translate(-190px,-35px) rotate(-24deg); } }
+      @keyframes year-to-right { to { opacity:0; transform:translate(190px,-35px) rotate(24deg); } }
+      @keyframes caravel-arrives { 0% { left:calc(100% + 25px); bottom:31%; opacity:1; transform:translateY(0) rotate(-1deg) scale(1); } 17% { transform:translateY(-5px) rotate(1deg) scale(1); } 31.2% { transform:translateY(3px) rotate(-1deg) scale(1); } 34.04% { left:calc(58% - 90px); bottom:31%; transform:translateY(0) rotate(0) scale(1); } 51.06% { left:calc(58% - 90px); bottom:31%; opacity:1; transform:translateY(0) rotate(0) scale(1); } 100% { left:-220px; bottom:42%; opacity:0; transform:translateY(0) rotate(-5deg) scale(.16); } }
+      @keyframes unroll-new-year-message { 0% { max-height:0; padding-top:0; padding-bottom:0; transform:translate(-50%,-45px); } 28% { transform:translate(-50%,0); } 100% { max-height:130px; padding-top:14px; padding-bottom:16px; transform:translate(-50%,0); } }
+      @keyframes move-aside-for-caravel { 0% { left:58%; transform:translateX(-50%); } 30% { transform:translate(-34%,-5px); } 60% { transform:translate(-18%,0); } 100% { left:72%; transform:translate(-50%,35px); } }
+      @keyframes walk-to-door { 0% { left:33%; transform:translate(-18px,0); } 12% { transform:translate(-18px,-7px); } 25% { transform:translate(-18px,0); } 37% { transform:translate(-18px,-7px); } 50% { transform:translate(-18px,0); } 62% { transform:translate(-31px,-7px); } 75% { transform:translate(-40px,0); } 87% { transform:translate(-47px,-7px); } 100% { left:58%; transform:translateX(-50%); } }
+      @keyframes walk-leg-left { from { transform:rotate(28deg); } to { transform:rotate(-34deg); } }
+      @keyframes walk-leg-right { from { transform:rotate(-28deg); } to { transform:rotate(34deg); } }
+      @keyframes walk-arm-left { from { transform:rotate(58deg); } to { transform:rotate(-42deg); } }
+      @keyframes walk-arm-right { from { transform:rotate(-60deg); } to { transform:rotate(40deg); } }
+      @keyframes sunrise { to { transform:translate(-50%,-115px); } }
+      @keyframes landscape-appears { from { opacity:0; filter:saturate(1) brightness(.62); } to { opacity:1; filter:saturate(.68) brightness(1); } }
+      @keyframes trash-crosses-sea { 0% { left:-170px; bottom:25%; opacity:0; transform:rotate(8deg) scale(1); } 5% { opacity:1; } 50% { transform:rotate(-5deg) scale(1); } 96% { opacity:1; transform:rotate(7deg) scale(.27); } 100% { left:calc(100% + 165px); bottom:45%; opacity:0; transform:rotate(7deg) scale(.25); } }
+      @keyframes fade-in { from { opacity:0; } to { opacity:1; } }
+    </style>
+    <style>
+      .scene-wrong .wire-person { animation:sit-and-fade 4s ease-in forwards; }
+      @keyframes sit-and-fade { 0% { opacity:1; transform:translate(0,0); } 15% { transform:translate(-18px,48px) rotate(72deg); } 72% { opacity:1; transform:translate(-18px,48px) rotate(72deg); } 100% { opacity:0; transform:translate(-18px,48px) rotate(72deg); } }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="studio" aria-label="Préparation des animations">
+        <div class="brand">
+          <span class="spark">✦</span>
+          <div><p>ATELIER LOCAL</p><h1>La porte du<br />Nouvel An</h1></div>
+        </div>
+
+        <div class="library-head">
+          <h2>Animations prêtes</h2>
+          <button id="new-animation" class="icon-button" title="Nouvelle animation" aria-label="Nouvelle animation">＋</button>
+        </div>
+        <nav id="animation-list" class="animation-list" aria-label="Liste des animations"></nav>
+
+        <div class="library-actions">
+          <button id="export-json" class="secondary">Exporter le JSON</button>
+          <label class="secondary import-label">Importer un JSON<input id="import-json" type="file" accept="application/json" /></label>
+        </div>
+        <p class="privacy-note">Vos données restent sur cet appareil. Aucun envoi vers un serveur.</p>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div><p class="eyebrow">PERSONNALISATION</p><h2 id="editor-title">Nouvelle animation</h2></div>
+          <div class="top-actions"><span id="save-state" aria-live="polite">Enregistré localement</span><button id="delete-animation" class="danger">Supprimer</button></div>
+        </header>
+
+        <div class="content-grid">
+          <form id="editor" class="editor-card">
+            <label>Nom de cette préparation<input id="label" name="label" maxlength="60" placeholder="Ex. Vœux pour Odile" /></label>
+            <label>Prénom <small>facultatif</small><input id="first-name" name="firstName" maxlength="40" placeholder="Odile" /></label>
+            <label>Question de la pancarte<textarea id="question" name="question" rows="3" maxlength="180" placeholder="Écrivez votre question personnalisée"></textarea></label>
+            <label>Bonne réponse <small>la 4ᵉ pancarte</small><textarea id="correct-answer" name="correctAnswer" rows="2" maxlength="120" placeholder="Notre danse improvisée sous la pluie !"></textarea></label>
+            <label>Réponses absurdes <small>une par ligne — ~12 proposées</small><textarea id="silly-answers" name="sillyAnswers" rows="8"></textarea></label>
+            <div class="form-actions"><button type="button" id="reset-preview" class="secondary">Rejouer l’aperçu</button><button type="button" id="duplicate" class="secondary">Dupliquer</button></div>
+          </form>
+
+          <section class="preview-panel" aria-label="Aperçu de l'animation">
+            <div id="stage" class="stage scene-intro" tabindex="0" aria-label="Aperçu de l'animation. Cliquez sur la question lorsqu'elle apparaît.">
+              <div class="stars" aria-hidden="true">✦　·　✧　·　✦　·　✧　·　✦</div>
+              <div class="moon" aria-hidden="true"></div>
+              <div class="door-reveal" aria-hidden="true"><div class="sun"></div><div class="sea"></div></div>
+              <div class="trash-bag" aria-hidden="true">Embrouilles<br />2026</div>
+              <div class="caravel" aria-hidden="true"><div class="caravel-mast"></div><div class="caravel-sail left"></div><div class="caravel-sail right"></div><div class="caravel-flag"></div></div>
+              <div class="door" aria-label="Porte de l'année 2027"><div class="door-year"><span class="year-left">20</span><span class="year-right">27</span></div><div class="door-knob"></div></div>
+              <div class="new-year-message">Embarque vers une bonne et heureuse nouvelle année</div>
+              <div id="wire-person" class="wire-person"><div class="head"></div><div class="body"></div><div class="arm arm-left"></div><div class="arm arm-right"></div><div class="leg leg-left"></div><div class="leg leg-right"></div><button id="sign" class="sign" type="button" aria-live="polite">?</button></div>
+              <p id="scene-caption" class="scene-caption" aria-live="polite"></p>
+              <button id="answer-button" class="answer-button" type="button" hidden></button>
+              <div id="success" class="success" hidden></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <template id="list-item-template"><button class="animation-item" type="button"><span class="item-name"></span><span class="item-detail"></span></button></template>
+    <script src="app.js?v=20261016-2"></script>
+  </body>
+</html>
