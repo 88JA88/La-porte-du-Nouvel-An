@@ -188,8 +188,8 @@
       @keyframes sit-and-fade { 0% { opacity:1; transform:translate(0,0); } 15% { transform:translate(-18px,48px) rotate(72deg); } 72% { opacity:1; transform:translate(-18px,48px) rotate(72deg); } 100% { opacity:0; transform:translate(-18px,48px) rotate(72deg); } }
     
 
-      /* En paysage, les textes restent dans la scène même sur un écran peu haut. */
-      @media (orientation: landscape) {
+      /* Les mêmes textes et animations sont utilisés dans les deux orientations. */
+      @media all {
         .stage { container-type:size; height:540px; }
         .scene-question .wire-person, .scene-answers .wire-person, .scene-wrong .wire-person { filter:none; }
         .scene-question .door-knob, .scene-answers .door-knob, .scene-wrong .door-knob { visibility:hidden; }
@@ -226,7 +226,7 @@
         @keyframes water-message-appears { from { opacity:0; } to { opacity:1; } }
         @keyframes water-message-disappears { from { opacity:1; } to { opacity:0; } }
       }
-      @media (orientation: landscape) and (max-width:580px) {
+      @media (max-width:580px) {
         .stage { height:470px; }
         .scene-success.scene-sunrise .new-year-message { right:calc(37% - 80px + 8ch); }
         .scene-success.scene-message-final .new-year-message { top:60%; right:calc(37% - 25px); }
@@ -236,6 +236,16 @@
         }
       }
     
+@media (orientation: portrait) and (max-width:580px) {
+  .scene-success.scene-sunrise .new-year-message { left:3%; right:22%; font-size:clamp(16px, 5cqw, 26px); }
+  .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:none; }
+  .scene-success.scene-message-final .new-year-message { top:calc(83% - 100px); left:auto; right:calc(37% - 25px); }
+}
+@media (orientation: landscape) and (max-height:500px) {
+  .scene-success.scene-sunrise .new-year-message { left:3%; right:22%; max-height:30cqh; font-size:clamp(16px, 4cqh, 22px); }
+  .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:none; }
+  .scene-success.scene-message-final .new-year-message { left:auto; right:calc(42% - 25px); }
+}
 body { margin: 0; } .stage { width: 100%; min-height: 100vh; min-height: 100svh; } @media (orientation: landscape) { .stage { height:100vh; height:100svh; } }</style></head><body><div id="stage" class="stage scene-intro" tabindex="0" aria-label="Aperçu de l'animation. Cliquez sur la question lorsqu'elle apparaît.">
               <div class="stars" aria-hidden="true">✦　·　✧　·　✦　·　✧　·　✦</div>
               <div class="moon" aria-hidden="true"></div>
@@ -272,7 +282,7 @@ function showRetreat(){ $("stage").className = "stage scene-retreat"; timer = se
 function fitSignText(){
   const sign = $("sign");
   sign.style.fontSize = "";
-  if (!matchMedia("(orientation: landscape)").matches || !sign.clientHeight) return;
+  if (!sign.clientHeight) return;
   let size = 21;
   while (sign.scrollHeight > sign.clientHeight && size > 11) sign.style.fontSize = `${--size}px`;
 }
