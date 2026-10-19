@@ -209,7 +209,7 @@
           color:#fff; font:400 clamp(22px, 4.8cqw, 41px)/1.18 "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
           text-align:right; white-space:normal; text-shadow:none; animation:water-message-appears 2.4s ease-out 6s forwards;
         }
-        .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:translateX(-4ch); }
+        .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:none; }
         .scene-success.scene-sunrise:not(.scene-message-changed) .message-before { display:block; font-size:.9em; line-height:1.05; }
         .scene-success.scene-message-changed .new-year-message,
         .scene-success.scene-message-final-rolling .new-year-message,
@@ -238,12 +238,12 @@
     
 @media (orientation: portrait) and (max-width:580px) {
   .scene-success.scene-sunrise .new-year-message { left:3%; right:22%; font-size:clamp(16px, 5cqw, 26px); }
-  .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:none; }
+  .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:translateX(4ch); }
   .scene-success.scene-message-final .new-year-message { top:calc(83% - 100px); left:auto; right:calc(37% - 25px); }
 }
 @media (orientation: landscape) and (max-height:500px) {
   .scene-success.scene-sunrise .new-year-message { left:3%; right:22%; max-height:30cqh; font-size:clamp(16px, 4cqh, 22px); }
-  .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:none; }
+  .scene-success.scene-sunrise:not(.scene-message-changed) .new-year-message { transform:translateX(4ch); }
   .scene-success.scene-message-final .new-year-message { left:auto; right:calc(42% - 25px); }
 }
 body { margin: 0; } .stage { width: 100%; min-height: 100vh; min-height: 100svh; } @media (orientation: landscape) { .stage { height:100vh; height:100svh; } }</style></head><body><div id="stage" class="stage scene-intro" tabindex="0" aria-label="Aperçu de l'animation. Cliquez sur la question lorsqu'elle apparaît.">
